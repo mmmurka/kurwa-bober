@@ -49,22 +49,11 @@ def search_product_makeup(original_name, hashcodes):
                     title_text = title.text.strip()
                     similarity = similarity_ratio(original_name, title_text)
                     if old_price:
-                        print(
-                            f"Назва: {title_text}, Нова ціна: {price.text.strip()} грн, Стара ціна: {old_price.text.strip()} грн, Відсоток співпадіння: {similarity}%", link)
-                        print('-' * 100)
+                        return {'price': price.text.strip(), 'old_price': old_price.text.strip(), 'link': link, 'match': similarity}
                     else:
-                        print(f"Назва: {title_text}, Ціна: {price.text.strip()} грн, Відсоток співпадіння: {similarity}%",
-                              {link})
-                        print('-' * 100)
-                    found_product = True
-                    break
-                else:
-                    print(f"Назва або ціна не знайдені для штрихкоду {code.strip()}")
-                    print('-' * 100)
+                        return {'price': price.text.strip(), 'link': link, 'match': similarity}
 
-        if not found_product:
-            print(f"Продукт за штрихкодами {codes} не знайдено")
-            print('-' * 100)
+
     finally:
         DriverSingleton.quit_driver()
 

@@ -59,5 +59,7 @@ def search_product_varus(product_name):
         print(f"Відсоток співпадіння: {match_percentage}%")
         print('-' * 100)
 
+        return {}
+
     finally:
         DriverSingleton.quit_driver()
