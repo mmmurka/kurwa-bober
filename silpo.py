@@ -1,5 +1,4 @@
 from difflib import SequenceMatcher
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -18,24 +17,11 @@ silpo_link = 'https://silpo.ua/search?find='
 # Зчитування файлу Excel
 df = pd.read_excel('h.xlsx')
 
-
-def link_creator(shop_link, name):
-    links_list = []
-    words = name.split()
-    # Створюємо запити, поступово видаляючи останнє слово, поки не знайдеться товар
-    while words:
-        search_key = '%20'.join(words)
-        links_list.append(shop_link + search_key)
-        words.pop()  # Видаляємо останнє слово для наступного циклу
-    return links_list
-
-
 def similarity_ratio(original, found):
     return round(SequenceMatcher(None, original, found).ratio() * 100, 2)
 
-
 # Ітерація по товарам із файлу
-for name in df['Unnamed: 2'].iloc[1:-1]:
+for name in df['Unnamed: 1'].iloc[1:-1]:
     words = name.split()
     found_product = False
 
@@ -62,8 +48,11 @@ for name in df['Unnamed: 2'].iloc[1:-1]:
             price = product.find('div', class_='ft-text-22')
             old_price = product.find('div', class_='ft-line-through')
             discount = product.find('div', class_='product-card-price__sale')
+            out_of_stock = product.find('div', class_='cart-soldout', string='Товар закінчився')
 
-            if title and price:
+            if out_of_stock:
+                print(f"Продукт за запитом '{name}' - '{title.text.strip()}' - Товар закінчився")
+            elif title and price:
                 title_text = title.text.strip()
                 similarity = similarity_ratio(name, title_text)
 
