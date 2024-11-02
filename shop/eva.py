@@ -11,7 +11,6 @@ eva_link = 'https://eva.ua/ua/search/?q='
 def search_product_eva(product_name):
     driver = DriverSingleton.get_driver()
     words = product_name.split()
-    found_product = False
     try:
         while words:
             product_link = eva_link + '%20'.join(words)
@@ -42,24 +41,14 @@ def search_product_eva(product_name):
                     similarity = similarity_ratio(product_name, title_text)
 
                     if old_price:
-                        print(
-                            f"Назва: {title_text}, Ціна зі знижкою: {price.text.strip()}, Стара ціна: {old_price.text.strip()}, Відсоток співпадіння: {similarity}%", link)
-                        print('-' * 100)
+                        return {'price': price.text.strip()[:-3], 'old_price': old_price.text.strip()[:-3],
+                                'match': similarity, 'link': link}
                     else:
-                        print(f"Назва: {title_text}, Ціна: {price.text.strip()}, Відсоток співпадіння: {similarity}%", link)
-                        print('-' * 100)
-                    found_product = True
+                        return {'price': price.text.strip()[:-3], 'match': similarity, 'link': link}
                 else:
-                    print("Назва або ціна не знайдені")
-                    print('-' * 100)
-            else:
-                words.pop()
+                    words.pop()
 
-            if not words:
-                print(f"Товар '{product_name}' не знайдено після всіх спроб.")
-                print('-' * 100)
-
-            if found_product:
-                break
+                if not words:
+                    return None
     finally:
         DriverSingleton.quit_driver()
