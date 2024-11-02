@@ -15,7 +15,7 @@ driver = webdriver.Chrome(options=options)
 makeup_link = 'https://makeup.com.ua/ua/search/?q='
 
 # Зчитування файлу Excel
-df = pd.read_excel('h.xlsx')
+df = pd.read_excel('prod.xlsx')
 
 
 def link_creator(shop_link, code):
