@@ -51,7 +51,7 @@ for original_name, hashcodes in zip(df['Unnamed: 2'].iloc[1:-1], df['Unnamed: 1'
         if product:
             title = product.find('a', class_='simple-slider-list__name')
             price = product.find('span', class_='price_item')
-            old_price = product.find('span', class_='old-price')  # Додано для пошуку старої ціни
+            old_price = product.find('span', class_='simple-slider-list__price_old .price_item')
             out_of_stock = product.find('div', class_='simple-slider-list__description', string='Немає в наявності')
 
             if out_of_stock:
@@ -72,7 +72,6 @@ for original_name, hashcodes in zip(df['Unnamed: 2'].iloc[1:-1], df['Unnamed: 1'
         # Якщо товар знайдено, зупиняємо пошук
         if found_product:
             break
-
         else:
             print(f"Продукт за штрихкодом {codes} не знайдено")
 
