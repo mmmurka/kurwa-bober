@@ -1,17 +1,16 @@
-from utils.functions import similarity_ratio
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
-from utils.driver import DriverSingleton
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
+from utils.driver import DriverSingleton
+from utils.functions import similarity_ratio
 
 silpo_link = 'https://silpo.ua/search?find='
 
 
 def search_product_silpo(name):
     words = name.split()
-    found_product = False
     driver = DriverSingleton.get_driver()
 
     try:
@@ -43,25 +42,14 @@ def search_product_silpo(name):
                     similarity = similarity_ratio(name, title_text)
 
                     if old_price:
-                        print(
-                            f"Назва: {title_text}, Ціна зі знижкою: {price.text.strip()}, Стара ціна: {old_price.text.strip()}, Відсоток співпадіння: {similarity}%", {link})
-                        print('-' * 100)
+                        return {'price': price.text.strip()[:-3], 'old_price': old_price.text.strip()[:-3], 'match': similarity, 'link': link}
                     else:
-                        print(f"Назва: {title_text}, Ціна: {price.text.strip()}, Відсоток співпадіння: {similarity}%", {link})
-                        print('-' * 100)
-                    found_product = True
-                else:
-                    print("Назва або ціна не знайдені")
-                    print('-' * 100)
+                        return {'price': price.text.strip()[:-3], 'match': similarity, 'link': link}
             else:
                 words.pop()
 
             if not words:
-                print(f"Товар '{name}' не знайдено після всіх спроб.")
-                print('-' * 100)
-
-            if found_product:
-                break
+                return None
     finally:
         DriverSingleton.quit_driver()
 
