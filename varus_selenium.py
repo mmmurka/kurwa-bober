@@ -24,6 +24,7 @@ def search_product_with_selenium(product_name):
 
         if not products:
             print("На жаль, товар не знайдено.")
+            print('-' * 100)
             return
 
         product = products[0]
@@ -56,6 +57,7 @@ def search_product_with_selenium(product_name):
         print(f"Ціна: {price_output}")
         if product_link:
             print(f"Лінк на товар: {product_link}")
+        print('-' * 100)
 
     finally:
         driver.quit()
