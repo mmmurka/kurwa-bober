@@ -11,7 +11,7 @@ def search_product_varus(product_name):
         search_url = f"https://varus.ua/search?q={product_name.replace(' ', '%20')}"
         driver.get(search_url)
 
-        WebDriverWait(driver, 2).until(
+        WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CLASS_NAME, "sf-product-card__block"))
         )
 
@@ -59,7 +59,7 @@ def search_product_varus(product_name):
         print(f"Відсоток співпадіння: {match_percentage}%")
         print('-' * 100)
 
-        return {}
+        return {'price': special_price, 'old_price': old_price, 'link': product_link, 'match': match_percentage}
 
     finally:
         DriverSingleton.quit_driver()
