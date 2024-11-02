@@ -53,6 +53,7 @@ ENV/
 
 # JetBrains
 .idea/
+.idea
 
 # Current project
 experimental/*
