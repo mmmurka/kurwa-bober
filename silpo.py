@@ -15,7 +15,7 @@ driver = webdriver.Chrome(options=options)
 silpo_link = 'https://silpo.ua/search?find='
 
 # Зчитування файлу Excel
-df = pd.read_excel('h.xlsx')
+df = pd.read_excel('prod.xlsx')
 
 def similarity_ratio(original, found):
     return round(SequenceMatcher(None, original, found).ratio() * 100, 2)

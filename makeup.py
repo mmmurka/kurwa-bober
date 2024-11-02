@@ -37,7 +37,7 @@ for original_name, hashcodes in zip(df['Unnamed: 2'].iloc[1:-1], df['Unnamed: 1'
 
         # Збільшуємо час очікування для завантаження контенту
         try:
-            WebDriverWait(driver, 5).until(
+            WebDriverWait(driver, 2).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'simple-slider-list__link'))
             )
         except Exception:
