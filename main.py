@@ -5,7 +5,7 @@ from shop.varus import search_product_varus
 from shop.makeup import search_product_makeup
 
 # Путь к Excel-файлу
-file_path = 'hh.xlsx'
+file_path = 'prod.xlsx'
 
 
 def update_excel_with_shop_data():
@@ -15,17 +15,16 @@ def update_excel_with_shop_data():
     hashcodes_list = df['Unnamed: 1'].iloc[1:-1]
 
     for index, (product, hashcodes) in enumerate(zip(products, hashcodes_list), start=1):
-        print(f"{index} - Processing product: {product}, hashcodes: {hashcodes}")
 
-        # Поиск и обновление для makeup
-        # makeup_product = search_product_makeup(product, hashcodes)
-        # if makeup_product:
-        #     df.at[index, 'makeup'] = makeup_product.get('price')
-        #     df.at[index, 'Unnamed: 12'] = makeup_product.get('old_price') if makeup_product.get(
-        #         'old_price') else makeup_product.get('price')
-        #     df.at[index, 'Unnamed: 13'] = makeup_product.get('link', '')
-        #     df.at[index, 'Unnamed: 14'] = makeup_product.get('match', '')
-        #     print(f"Makeup: {makeup_product} внесено")
+        makeup_product = search_product_makeup(product, hashcodes)
+        if makeup_product:
+            df.at[index, 'makeup'] = makeup_product.get('price')
+            df.at[index, 'Unnamed: 12'] = makeup_product.get('old_price') if makeup_product.get(
+                'old_price') else makeup_product.get('price')
+            df.at[index, 'Unnamed: 13'] = makeup_product.get('link', '')
+            df.at[index, 'Unnamed: 14'] = makeup_product.get('match', '')
+            print(f"Makeup: {makeup_product} внесено")
+        print(product)
 
         varus_product = search_product_varus(product)
         if varus_product:
@@ -34,6 +33,24 @@ def update_excel_with_shop_data():
             df.at[index, 'Unnamed: 17'] = varus_product.get('link', '')
             df.at[index, 'Unnamed: 18'] = varus_product.get('match', '')
             print(f"Varus: {varus_product} внесено")
+
+        silpo_product = search_product_silpo(product)
+        if silpo_product:
+            df.at[index, 'silpo'] = silpo_product.get('price')
+            df.at[index, 'Unnamed: 20'] = silpo_product.get('old_price') if silpo_product.get('old_price') else silpo_product.get('price')
+            df.at[index, 'Unnamed: 21'] = silpo_product.get('link', '')
+            df.at[index, 'Unnamed: 22'] = silpo_product.get('match', '')
+            print(f"Silpo: {silpo_product} внесено")
+
+
+        eva_product = search_product_eva(product)
+        if eva_product:
+            df.at[index, 'eva'] = eva_product.get('price')
+            df.at[index, 'Unnamed: 24'] = eva_product.get('old_price') if eva_product.get('old_price') else eva_product.get('price')
+            df.at[index, 'Unnamed: 25'] = eva_product.get('link', '')
+            df.at[index, 'Unnamed: 26'] = eva_product.get('match', '')
+            print(f"Eva: {eva_product} внесено")
+
 
     df.to_excel(file_path, index=False)
     print("Excel file updated successfully.")
