@@ -5,6 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class DriverSingleton:
+    _driver = None
 
     @classmethod
     def get_driver(cls):

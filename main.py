@@ -4,7 +4,6 @@ from shop.silpo import search_product_silpo
 from shop.varus import search_product_varus
 from shop.makeup import search_product_makeup
 
-# Путь к Excel-файлу
 file_path = 'prod.xlsx'
 
 

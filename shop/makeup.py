@@ -54,8 +54,6 @@ def search_product_makeup(original_name, hashcodes):
                     else:
                         return {'price': price.text.strip(), 'link': link, 'match': similarity}
 
-        # Если товар не найден ни по одному штрихкоду
-
         similarity = 0
         link = 'product not found'
         price = '-'

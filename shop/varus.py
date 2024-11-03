@@ -7,6 +7,7 @@ from utils.functions import similarity_ratio
 
 varus_link = 'https://varus.ua/search?q='
 
+
 def search_product_varus(product_name):
     words = product_name.split()
     driver = DriverSingleton.get_driver()
