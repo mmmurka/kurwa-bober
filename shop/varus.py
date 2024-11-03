@@ -1,61 +1,73 @@
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from utils.functions import similarity_ratio
 from utils.driver import DriverSingleton
+import math
 
-varus_link = 'https://varus.ua/search?q='
 
 def search_product_varus(product_name):
     driver = DriverSingleton.get_driver()
-    words = product_name.split()
+
+    # Проверка, является ли product_name строкой и не NaN
+    if not isinstance(product_name, str) or isinstance(product_name, float) and math.isnan(product_name):
+        print(f"Невалидное имя товара: {product_name}")
+        return {'price': '-', 'link': 'invalid product name', 'match': 0}
 
     try:
-        while words:
-            search_url = varus_link + '%20'.join(words)
-            driver.get(search_url)
+        search_url = f"https://varus.ua/search?q={product_name.replace(' ', '%20')}"
+        driver.get(search_url)
 
-            try:
-                # Ожидание загрузки карточек продуктов
-                WebDriverWait(driver, 2).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, 'sf-product-card__link'))
-                )
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "sf-product-card__block"))
+            )
+        except TimeoutException:
+            print(f"Товар '{product_name}' не найден на Varus.")
+            return {'price': '-', 'link': 'product not found', 'match': 0}
 
-                # Извлечение ссылки с помощью selenium
-                product_link_tag = driver.find_element(By.CLASS_NAME, 'sf-product-card__link')
-                link = product_link_tag.get_attribute('href')
+        products = driver.find_elements(By.CLASS_NAME, "sf-product-card__block")
 
-                # Проверка и корректировка ссылки
-                if link and not link.startswith('http'):
-                    link = 'https://varus.ua' + link
+        if not products:
+            print(f"На жаль, товар '{product_name}' не знайдено.")
+            return {'price': '-', 'link': 'product not found', 'match': 0}
 
-                # Извлечение названия и цены
-                title = driver.find_element(By.CLASS_NAME, 'sf-product-card__title').text.strip()
-                price = driver.find_element(By.CLASS_NAME, 'sf-price__regular').text.strip().replace(' грн', '')
+        product = products[0]
+        name = product.find_element(By.CLASS_NAME, "sf-product-card__title").text.strip()
 
-                # Проверка старой цены
-                try:
-                    old_price = driver.find_element(By.CLASS_NAME, 'sf-price__old').text.strip().replace(' грн', '')
-                except:
-                    old_price = None
+        product_link_elements = product.find_elements(By.CLASS_NAME,
+                                                      "sf-link.sf-product-card__link.sf-product-card__title-wrapper")
+        product_link = product_link_elements[0].get_attribute("href") if product_link_elements else None
 
-                # Подсчет схожести
-                similarity = similarity_ratio(product_name, title)
+        old_price = None
+        special_price = None
 
-                return {
-                    'price': price,
-                    'old_price': old_price,
-                    'match': similarity,
-                    'link': link
-                }
+        old_price_elements = product.find_elements(By.CLASS_NAME, "sf-price__old")
+        special_price_elements = product.find_elements(By.CLASS_NAME, "sf-price__special")
 
-            except Exception:
-                # Если элемент не найден, удаляем последнее слово и продолжаем без вывода ошибок
-                words.pop()
-                continue
+        if old_price_elements:
+            old_price = old_price_elements[0].text.strip()
+        if special_price_elements:
+            special_price = special_price_elements[0].text.strip()
 
-        # Если после всех итераций товар не найден, возвращаем None
-        return None
+        if not special_price:
+            regular_price_elements = product.find_elements(By.CLASS_NAME, "sf-price__regular")
+            special_price = regular_price_elements[0].text.strip() if regular_price_elements else None
+
+        if special_price:
+            price_output = f"Стара ціна: {old_price}, Ціна зі знижкою: {special_price}" if old_price else f"{special_price}"
+        else:
+            price_output = "немає в наявності"
+
+        match_percentage = similarity_ratio(product_name, name)
+
+        print(f"Назва товару: {name}")
+        print(f"Ціна: {price_output}")
+        if product_link:
+            print(f"Лінк на товар: {product_link}")
+            return {'price': price_output, 'link': product_link, 'match': match_percentage}
+        print(f"Відсоток співпадіння: {match_percentage}%")
 
     finally:
         DriverSingleton.quit_driver()

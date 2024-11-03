@@ -15,7 +15,6 @@ def link_creator(shop_link, code):
 
 def search_product_makeup(original_name, hashcodes):
     codes = str(hashcodes).split(',')
-    found_product = False
     driver = DriverSingleton.get_driver()
     try:
         for code in codes:
@@ -38,24 +37,28 @@ def search_product_makeup(original_name, hashcodes):
                 old_price = product.find('span', class_='simple-slider-list__price_old .price_item')
                 out_of_stock = product.find('div', class_='simple-slider-list__description', string='Немає в наявності')
 
-                # Находим тег ссылки и парсим href
                 if title and 'href' in title.attrs:
                     link = 'https://makeup.com.ua' + title['href']
                 else:
                     link = None
                 if out_of_stock:
-                    print(f"Продукт за штрихкодом {code.strip()} - '{title.text.strip()}' - Немає в наявності", link)
+                    return {
+                        'message': f"Продукт за штрихкодом {code.strip()} - '{title.text.strip()}' - Немає в наявності",
+                        'link': link}
                 elif title and price:
                     title_text = title.text.strip()
                     similarity = similarity_ratio(original_name, title_text)
                     if old_price:
-                        return {'price': price.text.strip(), 'old_price': old_price.text.strip(), 'link': link, 'match': similarity}
+                        return {'price': price.text.strip(), 'old_price': old_price.text.strip(), 'link': link,
+                                'match': similarity}
                     else:
                         return {'price': price.text.strip(), 'link': link, 'match': similarity}
 
+        # Если товар не найден ни по одному штрихкоду
 
+        similarity = 0
+        link = 'product not found'
+        price = '-'
+        return {'price': price, 'link': link, 'match': similarity}
     finally:
         DriverSingleton.quit_driver()
-
-
-
