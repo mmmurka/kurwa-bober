@@ -1,8 +1,14 @@
+import logging
+
 import pandas as pd
+
 from shop.eva import search_product_eva
 from shop.silpo import search_product_silpo
 from shop.varus import search_product_varus
 from shop.makeup import search_product_makeup
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 file_path = 'prod.xlsx'
 
