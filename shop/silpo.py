@@ -28,7 +28,7 @@ async def search_silpo_product(name):
         if products:
             for product in products:
                 title = product.find('div', class_='product-card__title')
-                gpt_info = await get_response(title, name)
+                gpt_info = await get_response(name, title)
                 if gpt_info[0] is True:
                     if product.find('div', data_autotestid_='cart-soldout'):
                         return {'price': 'Товару немає в наявності', 'match': gpt_info[1]}
