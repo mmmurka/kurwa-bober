@@ -4,8 +4,8 @@ import logging
 from ChatGPT.chat_api import ChatGPT
 
 
-a = 'Засіб Lactacyd Свіжість для інтимної гігієни 200мл'
-b = 'Засіб для інтимної гігієни Lactacyd «Свіжість» з дозатором, 200мл'
+a = 'Прокладки Naturella Ультра Ніжний Захист Нормал Плюс Single 8шт'
+b = 'Гігієнічні прокладки NATURELLA Ultra Normal Plus, розмір 2, 8 шт'
 
 async def get_response(excel: str, shop: str):
     chatGPT = ChatGPT(
@@ -33,20 +33,21 @@ async def get_response(excel: str, shop: str):
 
             Вихід:
             Повернути Це різні товари/Це однакові товари.
+            Та вивести matching у відсотках.
             
         """)
 
     logging.info(f"Назва з Excel: {excel}, назва з магазину: {shop}")
 
     result = await chatGPT.get_response(user_message=f'''
-        *працюй по цьому промту(пиши тільки відповідь Це різні товари/Це однакові товари)
+        *працюй по цьому промту(пиши тільки відповідь Це різні товари/Це однакові товари, та вивести matching у відсотках)*
             Назва з Excel: {excel}
             Назва з магазину: {shop}
     ''', temperature=0.0)
 
-    logging.info("Відповідь: %s", result)
-
-    return True if 'однакові' in result else False
+    logging.info(f"Результат: {result}")
+    return result
+    # return True if 'однакові' in result else False
 
 
 async def main():
