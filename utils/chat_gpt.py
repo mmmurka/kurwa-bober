@@ -30,9 +30,11 @@ async def get_response(excel: str, shop: str):
                - Специфікації чи позначення (як "+", "Plus", "Pro" тощо)
                - Кількість штук в упаковці та інші показники
             4. Врахувати, що різні позначення можуть вказувати на інший товар, навіть якщо назви схожі.
+            Також виводити matcing percentage
 
             Вихід:
-            Повернути Це різні товари/Це однакові товари.
+            Повернути Це різні товари/Це однакові товари у вигляді "однакові/різні - matching precentage" де matching 
+            percentage - відсоток співпадінь між назвами, тільки цифра
             
         """)
 
@@ -46,7 +48,7 @@ async def get_response(excel: str, shop: str):
 
     logging.info("Відповідь: %s", result)
 
-    return True if 'однакові' in result else False
+    return True, result.split('-')[-1] if 'однакові' in result else False
 
 
 async def main():
