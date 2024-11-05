@@ -3,13 +3,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from utils.chat_gpt import get_response
 from utils.driver import DriverSingleton
 from utils.functions import similarity_ratio
 
 silpo_link = 'https://silpo.ua/search?find='
+import logging
 
+async def search_silpo_product(name):
+    pass
 
-def search_product_silpo(name):
+async def search_product_silpo(name):
     words = name.split()
     driver = DriverSingleton.get_driver()
 
@@ -29,27 +33,39 @@ def search_product_silpo(name):
             soup = BeautifulSoup(driver.page_source, 'html.parser')
             product = soup.find('div', class_='products-list__item ng-star-inserted')
 
+            # if product:
+            #     title = product.find('div', class_='product-card__title')
+            #     price = product.find('div', class_='ft-text-22')
+            #     old_price = product.find('div', class_='ft-line-through')
+            #
+            #     product_link_tag = product.find('a', class_='product-card')
+            #     link = 'https://silpo.ua/' + product_link_tag['href'] if product_link_tag else None
+            #
+            #     if title and price:
+            #         title_text = title.text.strip()
+            #         similarity = similarity_ratio(name, title_text)
+            #
+            #         if old_price:
+            #             return {'price': price.text.strip()[:-3], 'old_price': old_price.text.strip()[:-3], 'match': similarity, 'link': link}
+            #         else:
+            #             return {'price': price.text.strip()[:-3], 'match': similarity, 'link': link}
             if product:
                 title = product.find('div', class_='product-card__title')
-                price = product.find('div', class_='ft-text-22')
-                old_price = product.find('div', class_='ft-line-through')
-
-                product_link_tag = product.find('a', class_='product-card')
-                link = 'https://silpo.ua/' + product_link_tag['href'] if product_link_tag else None
-
-                if title and price:
-                    title_text = title.text.strip()
-                    similarity = similarity_ratio(name, title_text)
-
+                if await get_response(title, name) is True:
+                    logging.info('Товар знайдено')
+                    price = product.find('div', class_='ft-text-22')
+                    old_price = product.find('div', class_='ft-line-through')
+                    product_link_tag = product.find('a', class_='product-card')
+                    link = 'https://silpo.ua/' + product_link_tag['href'] if product_link_tag else None
                     if old_price:
-                        return {'price': price.text.strip()[:-3], 'old_price': old_price.text.strip()[:-3], 'match': similarity, 'link': link}
+                        return {'price': price.text.strip()[:-3], 'old_price': old_price.text.strip()[:-3], 'link': link}
                     else:
-                        return {'price': price.text.strip()[:-3], 'match': similarity, 'link': link}
+                        return {'price': price.text.strip()[:-3], 'link': link}
             else:
                 words.pop()
 
             if not words:
-                return None
+                return {'price': 'Товар не знайдено'}
     finally:
         DriverSingleton.quit_driver()
 
