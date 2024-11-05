@@ -1,7 +1,11 @@
+import asyncio
 import logging
 
 from ChatGPT.chat_api import ChatGPT
 
+
+a = 'Засіб Lactacyd Свіжість для інтимної гігієни 200мл'
+b = 'Засіб для інтимної гігієни Lactacyd «Свіжість» з дозатором, 200мл'
 
 async def get_response(excel: str, shop: str):
     chatGPT = ChatGPT(
@@ -43,3 +47,12 @@ async def get_response(excel: str, shop: str):
     logging.info("Відповідь: %s", result)
 
     return True if 'однакові' in result else False
+
+
+async def main():
+    responce = await get_response(a, b)
+
+    print(responce)
+
+if __name__ == '__main__':
+    asyncio.run(main())
