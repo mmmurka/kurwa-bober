@@ -10,7 +10,6 @@ from bs4 import BeautifulSoup
 
 from utils.chat_gpt import get_response
 from utils.driver import DriverSingleton
-from utils.functions import similarity_ratio
 
 eva_link = 'https://eva.ua/ua/search/?q='
 
@@ -18,7 +17,6 @@ eva_link = 'https://eva.ua/ua/search/?q='
 async def search_product_eva(product_name):
     driver = DriverSingleton.get_driver()
     product_link = eva_link + '%20'.join(product_name.split())
-    words = product_name.split()
     try:
         driver.get(product_link)
 
