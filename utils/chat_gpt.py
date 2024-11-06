@@ -4,8 +4,8 @@ import logging
 from ChatGPT.chat_api import ChatGPT
 
 
-a = 'Засіб Lactacyd Свіжість для інтимної гігієни 200мл'
-b = 'Засіб для інтимної гігієни Lactacyd «Свіжість» з дозатором, 200мл'
+a = 'Прокладки Always Platinum Ultra Night 12шт'
+b = 'Гігієнічні прокладки Always Platinum Day & Night, розмір 3, 22 шт'
 
 async def get_response(excel: str, shop: str):
     chatGPT = ChatGPT(
@@ -47,6 +47,7 @@ async def get_response(excel: str, shop: str):
     ''', temperature=0.0)
 
     logging.info(f'Chat response: {result}')
+    print(result)
 
     return True, result.split('-')[-1] if 'однакові' in result else False
 
