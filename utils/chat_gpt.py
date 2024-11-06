@@ -46,7 +46,7 @@ async def get_response(excel: str, shop: str):
             Назва з магазину: {shop}
     ''', temperature=0.0)
 
-    logging.info("Відповідь: %s", result)
+    logging.info(f'Chat response: {result}')
 
     return True, result.split('-')[-1] if 'однакові' in result else False
 
